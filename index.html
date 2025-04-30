@@ -190,19 +190,6 @@
       font-weight: bold;
       color: #1f3c61;
     }
-
-    /* New styling for unit labels */
-    .unit-tag {
-      padding: 8px 12px;
-      font-size: 14px;
-      border-radius: 6px;
-      background-color: #1f3c61;
-      color: white;
-      display: inline-block;
-      margin-left: 6px;
-      text-align: center;
-      align-self: center;
-    }
   </style>
 </head>
 <body>
@@ -330,30 +317,22 @@
       <button class="reset-btn">Reset</button>
     </div>
     <div class="energy-box">
-      <div style="display: flex; align-items: flex-start; gap: 20px; width: 100%;">
-        <div style="font-weight: bold; font-size: 19px; color: #1f3c61; min-width: 140px; padding-top: 20px;">
-          KINETIC ENERGY
-        </div>
-        <div style="display: flex; gap: 20px; flex: 1;">
-          <div class="input-group">
-            <label for="ke-loss">Loss of KE</label>
-            <div class="input-flex">
+        <div style="display: flex; align-items: flex-start; gap: 20px; width: 100%;">
+          <div style="font-weight: bold; font-size: 19px; color: #1f3c61; min-width: 140px; padding-top: 20px;">
+            KINETIC ENERGY
+          </div>
+          <div style="display: flex; gap: 20px; flex: 1;">
+            <div class="input-group">
+              <label for="ke-loss">Loss of KE (%)</label>
               <input type="number" id="ke-loss" class="result-value" placeholder="Enter % or auto">
-              <span class="unit-tag">%</span> <!-- Visual unit tag -->
             </div>
-          </div>
-          <div class="input-group">
-            <label for="ke-before">Total KE before</label>
-            <div class="input-flex">
+            <div class="input-group">
+              <label for="ke-before">Total KE before (J)</label>
               <input type="number" id="ke-before" class="result-value" placeholder="Enter or auto">
-              <span class="unit-tag">J</span> <!-- Visual unit tag -->
             </div>
-          </div>
-          <div class="input-group">
-            <label for="ke-after">Total KE after</label>
-            <div class="input-flex">
+            <div class="input-group">
+              <label for="ke-after">Total KE after (J)</label>
               <input type="number" id="ke-after" class="result-value" placeholder="Enter or auto">
-              <span class="unit-tag">J</span> <!-- Visual unit tag -->
             </div>
           </div>
         </div>
