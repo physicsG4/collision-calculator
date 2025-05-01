@@ -4,341 +4,163 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Collision Calculator</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@500&display=swap" rel="stylesheet">
   <style>
     body {
       margin: 0;
-      font-family: 'Segoe UI', sans-serif;
-      background-color: #c0ddf6;
-      color: #1f3c61;
+      font-family: 'Poppins', sans-serif;
+      background-color: #b3d7f2;
+      color: #1a1a1a;
     }
 
     .container {
-      padding: 20px;
-      max-width: 1000px;
-      margin: auto;
+      max-width: 900px;
+      margin: 0 auto;
+      padding: 30px;
     }
 
     .header {
-      display: flex;
-      align-items: center;
-      background-color: #4a74a5;
-      border-radius: 12px;
-      padding: 12px 20px;
+      background-color: #2a4979;
       color: white;
-      margin-bottom: 10px;
+      padding: 15px;
+      border-radius: 20px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 20px;         
     }
 
     .header img {
-      width: 55px;
+      width: 60px;
       height: auto;
+      border-radius: 10px;
     }
 
-    .header-title {
-      font-size: 22px;
-      font-weight: bold;
-      margin-left: 12px;
+    .header h1 {
+      margin: 0;
+      font-size: 32px;
     }
 
     .description {
-      font-size: 14px;
-      background-color: #c0ddf6;
-      padding: 10px 0 20px;
-    }
-
-    .description b {
-      font-weight: bold;
-    }
-
-    .select-row {
-      display: flex;
-      align-items: center;
-      gap: 20px;
-      background-color: #f3f8ff;
-      padding: 15px 20px;
-      border-radius: 12px;
-      margin-bottom: 20px;
-    }
-
-    .select-row label {
-      font-size: 18px;
-      font-weight: bold;
-      color: #1f3c61;
-    }
-
-    select {
-      padding: 8px 12px;
-      font-size: 14px;
-      border-radius: 6px;
-      background-color: #1f3c61;
-      color: white;
-      border: none;
-    }
-
-    .formula-box {
-      margin-left: auto;
-      background-color: white;
-      padding: 8px 16px;
-      border-radius: 10px;
-      font-family: monospace;
-      font-size: 16px;
-      font-weight: bold;
-    }
-
-    .object-container {
-      display: flex;
-      justify-content: space-between;
-      gap: 25px;
-      margin-bottom: 20px;
-    }
-
-    .object-box {
-      flex: 1;
-      background-color: #e1f0ff;
-      padding: 20px;
-      border-radius: 12px;
-    }
-
-    .object-title {
-      font-weight: bold;
-      font-size: 16px;
-      margin-bottom: 18px;
-    }
-
-    .input-group {
-      margin-bottom: 18px;
-    }
-
-    .input-group label {
-      display: inline-block;
-      font-weight: bold;
-      background-color: #bfdcff;
-      color: #1f3c61;
-      padding: 5px 12px;
-      border-radius: 6px;
       font-size: 13px;
-      margin-bottom: 6px;
+      margin-top: 20px;
+      line-height: 1.6;
     }
 
-    .input-flex {
-      display: flex;
-      gap: 8px;
-    }
-
-    .input-group input {
-      flex: 2;
-      padding: 9px;
-      border: 1px solid #ccc;
-      border-radius: 6px;
-      font-size: 14px;
-    }
-
-    .input-group select.unit-select {
-      flex: 1;
-      padding: 9px;
-      border: 1px solid #ccc;
-      border-radius: 6px;
-      font-size: 14px;
-    }
-
-    .button-row {
-      display: flex;
-      justify-content: center;
-      gap: 20px;
-      margin-bottom: 20px;
-    }
-
-    .button-row button {
-      padding: 10px 20px;
-      font-size: 14px;
+    .highlight {
+      color: #1a68c5;
       font-weight: bold;
-      border: none;
-      border-radius: 8px;
-      background-color: #4a74a5;
-      color: white;
-      cursor: pointer;
     }
 
-    .button-row button:hover {
-      background-color: #365b84;
-    }
-
-    .energy-box {
-      background-color: #e1f0ff;
-      padding: 20px;
-      border-radius: 12px;
-      display: flex;
-      gap: 20px;
-    }
-
-    .energy-box .input-group {
-      flex: 1;
-    }
-
-    .energy-box .input-group label {
+    .calculator-button {
       display: block;
-      font-size: 14px;
-      font-weight: bold;
-      color: #1f3c61;
-      margin-bottom: 6px;
+      margin: 20px auto;
+      padding: 10px 20px;
+      background-color: white;
+      border: none;
+      border-radius: 20px;
+      font-size: 16px;
+      font-family: 'Poppins', sans-serif;
+      cursor: pointer;
+      color: #2a4979;
+      text-align: center;
     }
 
-    .result-value {
-      background-color: white;
-      padding: 10px;
-      border-radius: 6px;
-      font-size: 16px;
+    .calculator-button:hover {
+      background-color: #f0f0f0;
+    }
+
+    .definition-title {
+      font-size: 20px;
       font-weight: bold;
-      color: #1f3c61;
+      margin-top: 0px;
+      color: white;
+      text-shadow: 1px 1px 2px #000;
+      text-transform: uppercase;
+      text-align: left;
+      text-decoration: underline;
+    }
+
+    .term-box {
+      background-color: #e0f0fc;
+      padding: 1px;
+      border-radius: 15px;
+      margin-top: 15px;
+      display: flex;
+      gap: 15px;
+      align-items: center;
+    }
+
+    .term-box h3 {
+      background-color: #2a4979;
+      color: white;
+      padding: 15px;
+      border-radius: 10px;
+      text-align: center;
+      min-width: 140px;
+      font-size: 14px;
+      margin: 0;
+      line-height: 1.3;
+    }
+
+    .term-box p {
+      font-size: 14px;
+      margin: 0;
     }
   </style>
 </head>
 <body>
   <div class="container">
     <div class="header">
-      <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/1/1f/Collision_icon.svg/1024px-Collision_icon.svg.png" alt="icon">
-      <div class="header-title">COLLISION CALCULATOR</div>
+      <img src="calcicon.png" alt="Calculator Icon"/>
+      <h1>COLLISION CALCULATOR</h1>
     </div>
 
-    <div class="description">
-      <strong>What is a COLLISION?</strong><br />
-      A <b>collision</b> is an event where two or more objects exert forces on each other over a short time, while the total momentum of the system remains conserved according to the <b>law of conservation of momentum</b>.
+    <p class="description">
+      <strong>Collision Calculator</strong> is an <em>online calculator</em> programmed by a group of 
+      <span class="highlight">1st year Chemical Engineering students at Bicol University</span> 
+      as a final project for <em>PHYS11: Physics for Engineers–Lecture</em>, A.Y 2024-2025.
+    </p>
+
+    <p class="description">
+      This tool is designed to help users understand and analyze <strong>different types of collisions</strong> by allowing them 
+      to input known values and solve for unknown ones, such as mass or velocity. It also provides calculations for kinetic 
+      energy before and after collision, promoting a deeper understanding of momentum and energy conservation principles.
+    </p>
+
+    <a href="funccalc.html">
+      <button class="calculator-button">Go to Calculator</button>
+    </a>
+
+    <h2 class="definition-title">Definition of Terms</h2>
+
+    <div class="term-box">
+      <h3>law of<br/>conservation<br/>of momentum</h3>
+      <p>
+        the law of conservation of momentum is a fundamental principle in physics stating that the total momentum of a closed system remains constant, as long as no external forces are acting on the system.
+      </p>
     </div>
 
-    <div class="select-row">
-      <label for="collision-type">COLLISION TYPE</label>
-      <select id="collision-type">
-        <option>Don't Know</option>
-        <option>Perfectly Elastic</option>
-        <option>Partially Elastic</option>
-        <option>Perfectly Inelastic</option>
-      </select>
-      <div class="formula-box">m₁v₁ + m₂v₂ = m₁v′₁ + m₂v′₂</div>
+    <div class="term-box">
+      <h3>elastic<br/>collision</h3>
+      <p>
+        a collision where both momentum and kinetic energy are conserved; <b>perfect</b>: no kinetic energy loss, momentum conserved, objects bounce off; <b>partial</b>: some kinetic energy lost, momentum conserved, less bounce or slight deformation
+      </p>
     </div>
 
-    <div class="object-container">
-      <!-- Object 1 -->
-      <div class="object-box">
-        <div class="object-title">OBJECT 1</div>
-        <div class="input-group">
-          <label for="m1">mass (m₁)</label>
-          <div class="input-flex">
-            <input type="number" id="m1" placeholder="Enter value">
-            <select class="unit-select">
-              <option>kilograms (kg)</option>
-              <option>pound (lb)</option>
-              <option>grams (g)</option>
-              <option>milligrams (mg)</option>
-              <option>ounces (oz)</option>
-              <option>metric tons</option>
-              <option>atomic mass unit (amu)</option>
-            </select>
-          </div>
-        </div>
-        <div class="input-group">
-          <label for="v1">initial velocity (v₁)</label>
-          <div class="input-flex">
-            <input type="number" id="v1" placeholder="Enter value">
-            <select class="unit-select">
-              <option>m/s</option>
-              <option>cm/s</option>
-              <option>km/h</option>
-              <option>ft/s</option>
-              <option>in/s</option>
-              <option>mph</option>
-            </select>
-          </div>
-        </div>
-        <div class="input-group">
-          <label for="v1f">final velocity (v′₁)</label>
-          <div class="input-flex">
-            <input type="number" id="v1f" placeholder="Enter value">
-            <select class="unit-select">
-              <option>m/s</option>
-              <option>cm/s</option>
-              <option>km/h</option>
-              <option>ft/s</option>
-              <option>in/s</option>
-              <option>mph</option>
-            </select>
-          </div>
-        </div>
-      </div>
-
-      <div class="object-box">
-        <div class="object-title">OBJECT 2</div>
-        <div class="input-group">
-          <label for="m2">mass (m₂)</label>
-          <div class="input-flex">
-            <input type="number" id="m2" placeholder="Enter value">
-            <select class="unit-select">
-              <option>kilograms (kg)</option>
-              <option>pound (lb)</option>
-              <option>grams (g)</option>
-              <option>milligrams (mg)</option>
-              <option>ounces (oz)</option>
-              <option>metric tons</option>
-              <option>atomic mass unit (amu)</option>
-            </select>
-          </div>
-        </div>
-        <div class="input-group">
-          <label for="v2">initial velocity (v₂)</label>
-          <div class="input-flex">
-            <input type="number" id="v2" placeholder="Enter value">
-            <select class="unit-select">
-              <option>m/s</option>
-              <option>cm/s</option>
-              <option>km/h</option>
-              <option>ft/s</option>
-              <option>in/s</option>
-              <option>mph</option>
-            </select>
-          </div>
-        </div>
-        <div class="input-group">
-          <label for="v2f">final velocity (v′₂)</label>
-          <div class="input-flex">
-            <input type="number" id="v2f" placeholder="Enter value">
-            <select class="unit-select">
-              <option>m/s</option>
-              <option>cm/s</option>
-              <option>km/h</option>
-              <option>ft/s</option>
-              <option>in/s</option>
-              <option>mph</option>
-            </select>
-          </div>
-        </div>
-      </div>
+    <div class="term-box">
+      <h3>inelastic<br/>collision</h3>
+      <p>
+        a collision where momentum is conserved but kinetic energy decreases due to energy loss; <b>perfect</b>: maximum kinetic energy loss, momentum conserved, objects stick together after collision
+      </p>
     </div>
 
-    <div class="button-row">
-      <button class="calculate-btn">Calculate</button>
-      <button class="reset-btn">Reset</button>
-    </div>
-    <div class="energy-box">
-        <div style="display: flex; align-items: flex-start; gap: 20px; width: 100%;">
-          <div style="font-weight: bold; font-size: 19px; color: #1f3c61; min-width: 140px; padding-top: 20px;">
-            KINETIC ENERGY
-          </div>
-          <div style="display: flex; gap: 20px; flex: 1;">
-            <div class="input-group">
-              <label for="ke-loss">Loss of KE (%)</label>
-              <input type="number" id="ke-loss" class="result-value" placeholder="Enter % or auto">
-            </div>
-            <div class="input-group">
-              <label for="ke-before">Total KE before (J)</label>
-              <input type="number" id="ke-before" class="result-value" placeholder="Enter or auto">
-            </div>
-            <div class="input-group">
-              <label for="ke-after">Total KE after (J)</label>
-              <input type="number" id="ke-after" class="result-value" placeholder="Enter or auto">
-            </div>
-          </div>
-        </div>
-      </div>
+    <div class="term-box">
+      <h3>kinetic<br/>energy</h3>
+      <p>
+        Kinetic energy (KE) is the energy of motion wherein this energy is conserved in elastic collisions, but not in inelastic. The masses that collide don't deform from the collision nor do they stick together.
+      </p>
     </div>
   </div>
-  <script src="script.js"></script>
 </body>
 </html>
