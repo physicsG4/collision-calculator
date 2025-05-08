@@ -1,0 +1,688 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Collision Calculator</title>
+  <style>
+    body {
+      margin: 0;
+      font-family: 'Segoe UI', sans-serif;
+      background-color: #c0ddf6;
+      color: #1f3c61;
+      display: flex;
+      flex-direction: column;
+      min-height: 100vh;
+    }
+
+    .container {
+      padding: 20px;
+      max-width: 1000px; /* Reverted to original width */
+      margin: auto;
+      flex: 1 0 auto;
+    }
+
+    .header {
+      display: flex;
+      align-items: center;
+      background-color: #4a74a5;
+      border-radius: 12px;
+      padding: 12px 20px;
+      color: white;
+      margin-bottom: 10px;
+    }
+
+    .header img {
+      width: 55px;
+      height: auto;
+    }
+
+    .header-title {
+      font-size: 22px;
+      font-weight: bold;
+      margin-left: 12px;
+    }
+
+    .description {
+      font-size: 14px;
+      background-color: #c0ddf6;
+      padding: 10px 0 20px;
+    }
+
+    .description b {
+      font-weight: bold;
+    }
+
+    .select-row {
+      display: flex;
+      align-items: center;
+      gap: 20px;
+      background-color: #f3f8ff;
+      padding: 15px 20px;
+      border-radius: 12px;
+      margin-bottom: 20px;
+    }
+
+    .select-row label {
+      font-size: 18px;
+      font-weight: bold;
+      color: #1f3c61;
+    }
+
+    select {
+      padding: 8px 12px;
+      font-size: 14px;
+      border-radius: 6px;
+      background-color: #1f3c61;
+      color: white;
+      border: none;
+    }
+
+    .formula-box {
+      margin-left: auto;
+      background-color: white;
+      padding: 8px 16px;
+      border-radius: 10px;
+      font-family: monospace;
+      font-size: 16px;
+      font-weight: bold;
+      white-space: pre-line;
+    }
+
+    .object-container {
+      display: flex;
+      justify-content: space-between;
+      gap: 25px;
+      margin-bottom: 20px;
+    }
+
+    .object-box {
+      flex: 1;
+      background-color: #e1f0ff;
+      padding: 20px;
+      border-radius: 12px;
+    }
+
+    .object-title {
+      font-weight: bold;
+      font-size: 16px;
+      margin-bottom: 18px;
+    }
+
+    .input-group {
+      margin-bottom: 18px;
+    }
+
+    .input-group label {
+      display: inline-block;
+      font-weight: bold;
+      background-color: #bfdcff;
+      color: #1f3c61;
+      padding: 5px 12px;
+      border-radius: 6px;
+      font-size: 13px;
+      margin-bottom: 6px;
+    }
+
+    .input-flex {
+      display: flex;
+      gap: 8px;
+    }
+
+    .input-group input {
+      flex: 2;
+      padding: 9px;
+      border: 1px solid #ccc;
+      border-radius: 6px;
+      font-size: 14px;
+    }
+
+    .input-group select.unit-select {
+      flex: 1;
+      padding: 9px;
+      border: 1px solid #ccc;
+      border-radius: 6px;
+      font-size: 14px;
+    }
+
+    .button-row {
+      display: flex;
+      justify-content: center;
+      gap: 20px;
+      margin-bottom: 20px;
+    }
+
+    .button-row button {
+      padding: 10px 20px;
+      font-size: 14px;
+      font-weight: bold;
+      border: none;
+      border-radius: 8px;
+      background-color: #4a74a5;
+      color: white;
+      cursor: pointer;
+      user-select: none;
+    }
+
+    .button-row button:hover {
+      background-color: #365b84;
+    }
+
+    .energy-box {
+      background-color: #e1f0ff;
+      padding: 20px;
+      border-radius: 12px;
+      display: flex;
+      gap: 20px;
+      margin-bottom: 40px;
+    }
+
+    .energy-box .input-group {
+      flex: 1;
+    }
+
+    .energy-box .input-group label {
+      display: block;
+      font-size: 14px;
+      font-weight: bold;
+      color: #1f3c61;
+      margin-bottom: 6px;
+    }
+
+    .result-value {
+      background-color: white;
+      padding: 10px;
+      border-radius: 6px;
+      font-size: 16px;
+      font-weight: bold;
+      color: #1f3c61;
+    }
+
+    /* Animation canvas container */
+    #animation-container {
+      width: 1000px; /* Original width */
+      max-width: 100%;
+      height: 180px; /* Reduced height */
+      margin: 0 auto 40px auto;
+      background-color: #f3f8ff; /* Light blue background matching palette */
+      border-radius: 12px;
+      box-shadow: 0 0 15px rgba(0,0,0,0.1);
+      position: relative;
+      user-select: none;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+    }
+    #simulation-label {
+      font-weight: bold;
+      font-size: 16px; /* Smaller font size */
+      color: #1f3c61;
+      padding: 8px;
+      text-align: center;
+      border-bottom: 2px solid #4a74a5;
+      user-select: none;
+    }
+
+    #collisionCanvas {
+      flex: 1;
+      border-radius: 12px;
+      width: 100%;
+      height: 100%;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="header">
+      <img src="calcicon.png" alt="icon" />
+      <div class="header-title">COLLISION CALCULATOR</div>
+    </div>
+
+    <div class="description">
+      <strong>What is a COLLISION?</strong><br />
+      A <b>collision</b> is an event where two or more objects exert forces on each other over a short time, while the total momentum of the system remains conserved according to the <b>law of conservation of momentum</b>.
+    </div>
+
+    <div class="select-row">
+      <label for="collision-type">COLLISION TYPE</label>
+      <select id="collision-type">
+        <option>Unknown</option>
+        <option>Perfectly Elastic</option>
+        <option>Partially Elastic</option>
+        <option>Perfectly Inelastic</option>
+      </select>
+      <div class="formula-box" id="formula-box">m₁v₁ + m₂v₂ = m₁v′₁ + m₂v′₂</div>
+    </div>
+
+    <div class="object-container">
+      <!-- Object 1 -->
+      <div class="object-box">
+        <div class="object-title">OBJECT 1</div>
+        <div class="input-group">
+          <label for="m1">mass (m₁)</label>
+          <div class="input-flex">
+            <input type="number" id="m1" placeholder="Enter value" min="0" step="any" />
+            <select class="unit-select" id="m1-unit">
+              <option>kilograms (kg)</option>
+              <option>pound (lb)</option>
+              <option>grams (g)</option>
+              <option>milligrams (mg)</option>
+              <option>ounces (oz)</option>
+              <option>metric tons</option>
+              <option>atomic mass unit (amu)</option>
+            </select>
+          </div>
+        </div>
+        <div class="input-group">
+          <label for="v1">initial velocity (v₁)</label>
+          <div class="input-flex">
+            <input type="number" id="v1" placeholder="Enter value" step="any" />
+            <select class="unit-select" id="v1-unit">
+              <option>m/s</option>
+              <option>cm/s</option>
+              <option>km/h</option>
+              <option>ft/s</option>
+              <option>in/s</option>
+              <option>mph</option>
+            </select>
+          </div>
+        </div>
+        <div class="input-group">
+          <label for="v1f">final velocity (v′₁)</label>
+          <div class="input-flex">
+            <input type="number" id="v1f" placeholder="Enter value" step="any" />
+            <select class="unit-select" id="v1f-unit">
+              <option>m/s</option>
+              <option>cm/s</option>
+              <option>km/h</option>
+              <option>ft/s</option>
+              <option>in/s</option>
+              <option>mph</option>
+            </select>
+          </div>
+        </div>
+      </div>
+
+      <div class="object-box">
+        <div class="object-title">OBJECT 2</div>
+        <div class="input-group">
+          <label for="m2">mass (m₂)</label>
+          <div class="input-flex">
+            <input type="number" id="m2" placeholder="Enter value" min="0" step="any" />
+            <select class="unit-select" id="m2-unit">
+              <option>kilograms (kg)</option>
+              <option>pound (lb)</option>
+              <option>grams (g)</option>
+              <option>milligrams (mg)</option>
+              <option>ounces (oz)</option>
+              <option>metric tons</option>
+              <option>atomic mass unit (amu)</option>
+            </select>
+          </div>
+        </div>
+        <div class="input-group">
+          <label for="v2">initial velocity (v₂)</label>
+          <div class="input-flex">
+            <input type="number" id="v2" placeholder="Enter value" step="any" />
+            <select class="unit-select" id="v2-unit">
+              <option>m/s</option>
+              <option>cm/s</option>
+              <option>km/h</option>
+              <option>ft/s</option>
+              <option>in/s</option>
+              <option>mph</option>
+            </select>
+          </div>
+        </div>
+        <div class="input-group">
+          <label for="v2f">final velocity (v′₂)</label>
+          <div class="input-flex">
+            <input type="number" id="v2f" placeholder="Enter value" step="any" />
+            <select class="unit-select" id="v2f-unit">
+              <option>m/s</option>
+              <option>cm/s</option>
+              <option>km/h</option>
+              <option>ft/s</option>
+              <option>in/s</option>
+              <option>mph</option>
+            </select>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="button-row">
+      <button class="calculate-btn">Calculate</button>
+      <button class="reset-btn">Reset</button>
+    </div>
+    <div style="margin-top: 8px;">
+      <label style="font-weight: bold; color: #1f3c61;">
+        <input type="checkbox" id="manualKECheckbox" onchange="redirectToManualKE()"> Enable manual KE input
+      </label>
+    </div>
+    <div class="energy-box">
+      <div style="display: flex; align-items: flex-start; gap: 20px; width: 100%;">
+        <div style="font-weight: bold; font-size: 19px; color: #1f3c61; min-width: 140px; padding-top: 20px;">
+          KINETIC ENERGY
+        </div>
+        <div style="display: flex; gap: 20px; flex: 1;">
+          <div class="input-group">
+            <label>Loss of KE</label>
+            <div id="ke-loss" class="result-value">-- %</div>
+          </div>
+          <div class="input-group">
+            <label>Total KE before collision</label>
+            <div id="ke-before" class="result-value">-- J</div>
+          </div>
+          <div class="input-group">
+            <label>Total KE after collision</label>
+            <div id="ke-after" class="result-value">-- J</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div id="animation-container">
+    <div id="simulation-label">Collision Simulation</div>
+    <canvas id="collisionCanvas" width="1000" height="220"></canvas>
+  </div>
+
+<script>
+  const collisionTypeSelect = document.getElementById('collision-type');
+  const formulaBox = document.getElementById('formula-box');
+
+  const KE_BEFORE = document.getElementById('ke-before');
+  const KE_AFTER = document.getElementById('ke-after');
+  const KE_LOSS = document.getElementById('ke-loss');
+
+  const calculateBtn = document.querySelector('.calculate-btn');
+  const resetBtn = document.querySelector('.reset-btn');
+
+  const massUnits = {
+    'kilograms (kg)': 1,
+    'grams (g)': 0.001,
+    'milligrams (mg)': 0.000001,
+    'pound (lb)': 0.453592,
+    'ounces (oz)': 0.0283495,
+    'metric tons': 1000,
+    'atomic mass unit (amu)': 1.66053906660e-27
+  };
+
+  const velocityUnits = {
+    'm/s': 1,
+    'km/h': 1 / 3.6,
+    'mph': 0.44704,
+    'ft/s': 0.3048,
+    'cm/s': 0.01,
+    'in/s': 0.0254
+  };
+
+  function updateFormula() {
+    const type = collisionTypeSelect.value;
+    if (type === 'Perfectly Inelastic') {
+      formulaBox.textContent = 'm₁v₁ + m₂v₂ = (m₁ + m₂)v';
+    } else if (type === 'Perfectly Elastic') {
+      formulaBox.innerHTML = `v′₁ = [(m₁ - m₂) / (m₁ + m₂)] v₁ + [2m₂ / (m₁ + m₂)] v₂
+v′₂ = [2m₁ / (m₁ + m₂)] v₁ + [(m₂ - m₁) / (m₁ + m₂)] v₂`;
+    } else {
+      formulaBox.textContent = 'm₁v₁ + m₂v₂ = m₁v′₁ + m₂v′₂';
+    }
+  }
+
+  function getInputValue(id) {
+    return parseFloat(document.getElementById(id).value) || 0;
+  }
+
+  function convertMass(id) {
+    const value = getInputValue(id);
+    const unit = document.getElementById(id + '-unit').value;
+    return value * (massUnits[unit] || 1);
+  }
+
+  function convertVelocity(id) {
+    const value = getInputValue(id);
+    const unit = document.getElementById(id + '-unit').value;
+    return value * (velocityUnits[unit] || 1);
+  }
+
+  function calculate() {
+    const m1 = convertMass('m1');
+    const m2 = convertMass('m2');
+    const v1 = convertVelocity('v1');
+    const v2 = convertVelocity('v2');
+
+    let v1f = convertVelocity('v1f');
+    let v2f = convertVelocity('v2f');
+
+    const collision = collisionTypeSelect.value;
+
+    if (collision === 'Perfectly Elastic' || collision === 'Unknown') {
+      v1f = ((m1 - m2) / (m1 + m2)) * v1 + (2 * m2 / (m1 + m2)) * v2;
+      v2f = ((m2 - m1) / (m1 + m2)) * v2 + (2 * m1 / (m1 + m2)) * v1;
+    } else if (collision === 'Perfectly Inelastic') {
+      const vFinal = (m1 * v1 + m2 * v2) / (m1 + m2);
+      v1f = v2f = vFinal;
+    } else if (collision === 'Partially Elastic') {
+      const e = 0.5;
+      if (m1 + m2 > 0) {
+        v1f = ((m1 - e * m2) * v1 + (1 + e) * m2 * v2) / (m1 + m2);
+        v2f = ((m2 - e * m1) * v2 + (1 + e) * m1 * v1) / (m1 + m2);
+      }
+    } else {
+      v1f = v1f || 0;
+      v2f = v2f || 0;
+    }
+
+    const keBefore = 0.5 * m1 * v1 * v1 + 0.5 * m2 * v2 * v2;
+    const keAfter = 0.5 * m1 * v1f * v1f + 0.5 * m2 * v2f * v2f;
+    const keLoss = keBefore !== 0 ? ((keBefore - keAfter) / keBefore) * 100 : 0;
+
+    KE_BEFORE.textContent = keBefore.toFixed(2) + ' J';
+    KE_AFTER.textContent = keAfter.toFixed(2) + ' J';
+    KE_LOSS.textContent = keLoss.toFixed(2) + ' %';
+
+    startAnimation(m1, m2, v1, v2, v1f, v2f, collision);
+  }
+
+  function reset() {
+    document.querySelectorAll('input').forEach(input => input.value = '');
+    KE_BEFORE.textContent = '-- J';
+    KE_AFTER.textContent = '-- J';
+    KE_LOSS.textContent = '-- %';
+    updateFormula();
+
+    stopAnimation();
+  }
+
+  function redirectToManualKE() {
+    const isChecked = document.getElementById("manualKECheckbox").checked;
+    if (isChecked) {
+      window.location.href = "manual-ke.html";
+    }
+  }
+
+  updateFormula();
+  collisionTypeSelect.addEventListener('change', updateFormula);
+  calculateBtn.addEventListener('click', calculate);
+  resetBtn.addEventListener('click', reset);
+
+  // Animation
+
+  const canvas = document.getElementById('collisionCanvas');
+  const ctx = canvas.getContext('2d');
+  const width = canvas.width;
+  const height = canvas.height;
+
+  const yPos = height / 2;
+
+  const maxRadius = 40; // Keep bigger ball radius
+  const minRadius = 30;
+
+  let animationRunning = false;
+  let animationId = null;
+
+  let ball1, ball2;
+
+  const velocityScale = 50;
+
+  function createBall(color, mass, x, vx) {
+    return {
+      color,
+      mass,
+      radius: Math.min(Math.max(minRadius, 15 + Math.cbrt(mass) * 4), maxRadius),
+      x,
+      y: yPos,
+      vx,
+      stuck: false,
+      draw() {
+        const radius = this.radius;
+        const gradient = ctx.createRadialGradient(
+          this.x - radius / 3,
+          this.y - radius / 3,
+          radius / 5,
+          this.x,
+          this.y,
+          radius
+        );
+        gradient.addColorStop(0, brightColor(this.color));
+        gradient.addColorStop(1, this.color);
+        ctx.fillStyle = gradient;
+        ctx.beginPath();
+        ctx.arc(this.x, this.y, radius, 0, Math.PI * 2);
+        ctx.fill();
+      }
+    };
+  }
+
+  function brightColor(c){
+    // brighten color similar to CSS palette
+    const colors = {
+      '#004a91': '#5aa1e9',
+      '#8abbfd': '#c4dffb'
+    };
+    return colors[c] || c;
+  }
+
+  function distance(b1, b2) {
+    return Math.abs(b1.x - b2.x);
+  }
+
+  function elasticCollisionVelocities(m1, m2, u1, u2) {
+    const v1 = ((m1 - m2) / (m1 + m2)) * u1 + (2 * m2) / (m1 + m2) * u2;
+    const v2 = ((m2 - m1) / (m1 + m2)) * u2 + (2 * m1) / (m1 + m2) * u1;
+    return [v1, v2];
+  }
+
+  function partiallyElasticVelocities(m1, m2, u1, u2, e=0.5){
+    const v1 = ((m1 * u1) + (m2 * u2) + m2 * e * (u2 - u1)) / (m1 + m2);
+    const v2 = ((m1 * u1) + (m2 * u2) + m1 * e * (u1 - u2)) / (m1 + m2);
+    return [v1, v2];
+  }
+
+  let lastTime=null;
+  let collisionOccurred = false;
+
+  function startAnimation(m1, m2, v1_init, v2_init, v1_final, v2_final, collisionType) {
+    if(animationRunning) return;
+
+    // Balls colors blue and light blue from palette
+    ball1 = createBall('#004a91', m1, 100, v1_init * velocityScale);
+    ball2 = createBall('#8abbfd', m2, width - 100, v2_init * velocityScale);
+
+    ball1.stuck = false;
+    ball2.stuck = false;
+
+    lastTime = performance.now();
+    collisionOccurred = false;
+
+    function animate(time){
+      if(!animationRunning) return;
+      const elapsed = (time - lastTime) / 1000;
+      lastTime = time;
+
+      if(!ball1.stuck) ball1.x += ball1.vx * elapsed;
+      if(!ball2.stuck) ball2.x += ball2.vx * elapsed;
+
+      const leftLimit = ball1.radius;
+      const rightLimit = width - ball2.radius;
+
+      if(ball1.x < leftLimit){
+        ball1.x = leftLimit;
+        ball1.vx = -ball1.vx;
+      }
+      if(ball2.x > rightLimit){
+        ball2.x = rightLimit;
+        ball2.vx = -ball2.vx;
+      }
+
+      const dist = distance(ball1, ball2);
+      const minDist = ball1.radius + ball2.radius;
+
+      if(dist <= minDist){
+        if(!collisionOccurred){
+          collisionOccurred = true;
+          if(collisionType === 'Perfectly Inelastic'){
+            ball1.x = (ball1.x + ball2.x)/2 - ball1.radius/2;
+            ball2.x = ball1.x + ball1.radius + ball2.radius;
+            const avgVx = (ball1.vx * ball1.mass + ball2.vx * ball2.mass)/(ball1.mass + ball2.mass);
+            ball1.vx = avgVx;
+            ball2.vx = avgVx;
+            ball1.stuck = true;
+            ball2.stuck = true;
+          } else if(collisionType === 'Partially Elastic'){
+            let [newV1, newV2] = partiallyElasticVelocities(ball1.mass, ball2.mass, ball1.vx/velocityScale, ball2.vx/velocityScale);
+            ball1.vx = newV1 * velocityScale;
+            ball2.vx = newV2 * velocityScale;
+            const overlap = minDist - dist;
+            ball1.x -= overlap/2;
+            ball2.x += overlap/2;
+          } else {
+            let [newV1, newV2] = elasticCollisionVelocities(ball1.mass, ball2.mass, ball1.vx/velocityScale, ball2.vx/velocityScale);
+            ball1.vx = newV1 * velocityScale;
+            ball2.vx = newV2 * velocityScale;
+            const overlap = minDist - dist;
+            ball1.x -= overlap/2;
+            ball2.x += overlap/2;
+          }
+        }
+      }
+
+      if(collisionOccurred){
+        const margin = 2;
+        const movingApart = (ball1.vx < ball2.vx) || (ball1.vx === 0 && ball2.vx === 0);
+        if(dist > minDist + margin && movingApart){
+          stopAnimation();
+        }
+        if(collisionType === 'Perfectly Inelastic' && ball1.stuck && ball2.stuck){
+          stopAnimation();
+        }
+      }
+
+      ctx.clearRect(0,0,width,height);
+      ctx.fillStyle = 'rgba(0,0,0,0.1)';
+      ctx.ellipse(ball1.x, ball1.y + ball1.radius*0.8, ball1.radius*0.8, ball1.radius*0.3, 0, 0, Math.PI*2);
+      ctx.fill();
+      ctx.ellipse(ball2.x, ball2.y + ball2.radius*0.8, ball2.radius*0.8, ball2.radius*0.3, 0, 0, Math.PI*2);
+      ctx.fill();
+      ball1.draw();
+      ball2.draw();
+
+      if(animationRunning)
+        animationId = requestAnimationFrame(animate);
+    }
+    animationRunning = true;
+    animationId = requestAnimationFrame(animate);
+  }
+
+  function stopAnimation() {
+    if(!animationRunning) return;
+    animationRunning = false;
+    if(animationId){
+      cancelAnimationFrame(animationId);
+      animationId = null;
+    }
+  }
+</script>
+</body>
+</html>
