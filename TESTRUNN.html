@@ -184,7 +184,6 @@
       border: 1px solid #ccc;
       color: #1f3c61;
     }
-    /* Animation canvas container */
     #animation-container {
       width: 1000px;
       max-width: 100%;
@@ -361,24 +360,24 @@
   <div id="simulation-label">Collision Simulation</div>
   <canvas id="collisionCanvas" width="1000" height="220"></canvas>
 </div>
-        <div style="display: flex; justify-content: flex-start; margin-top: 0%;">
-            <button id="backHomeBtn" style="
-              background-color: #3a5a86;
-              color: white;
-              padding: 10px 20px;
-              font-weight: bold;
-              font-size: 14px;
-              border: none;
-              border-radius: 8px;
-              cursor: pointer;
-              user-select: none;
-              margin-left: 16.75%;
-              margin-bottom: 20%;
-            ">
-              ← Back to homepage
-            </button>
+<div style="display: flex; justify-content: flex-start; margin-top: 0%;">
+  <button id="backHomeBtn" style="
+    background-color: #3a5a86;
+    color: white;
+    padding: 10px 20px;
+    font-weight: bold;
+    font-size: 14px;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    user-select: none;
+    margin-left: 16.95%;
+    margin-bottom: 20%;
+  ">
+    ← Back to homepage
+  </button>
+</div>
 <script>
-  // Cached DOM elements
   const collisionTypeSelect = document.getElementById('collision-type');
   const formulaBox = document.getElementById('formula-box');
   const calculateBtn = document.querySelector('.calculate-btn');
@@ -389,17 +388,15 @@
   const keBeforeInput = document.getElementById('ke-before-input');
   const keAfterInput = document.getElementById('ke-after-input');
 
-  // Mass and velocity input arrays with IDs and units
   const inputsData = [
-    { valId: 'm1', unitId: 'm1-unit', isMass:true },
-    { valId: 'v1', unitId: 'v1-unit', isMass:false },
-    { valId: 'v1f', unitId: 'v1f-unit', isMass:false },
-    { valId: 'm2', unitId: 'm2-unit', isMass:true },
-    { valId: 'v2', unitId: 'v2-unit', isMass:false },
-    { valId: 'v2f', unitId: 'v2f-unit', isMass:false }
+    { valId: 'm1', unitId: 'm1-unit', isMass: true },
+    { valId: 'v1', unitId: 'v1-unit', isMass: false },
+    { valId: 'v1f', unitId: 'v1f-unit', isMass: false },
+    { valId: 'm2', unitId: 'm2-unit', isMass: true },
+    { valId: 'v2', unitId: 'v2-unit', isMass: false },
+    { valId: 'v2f', unitId: 'v2f-unit', isMass: false }
   ];
 
-  // Units conversion
   const massUnits = {
     'kilograms (kg)': 1,
     'grams (g)': 0.001,
@@ -418,7 +415,6 @@
     'in/s': 0.0254
   };
 
-  // Convert input field value to SI unit (mass in kg or velocity in m/s)
   function toSI(valId, unitId, isMass) {
     const valStr = document.getElementById(valId).value.trim();
     if (!valStr) return NaN;
@@ -427,14 +423,13 @@
     const unitFactor = isMass ? (massUnits[document.getElementById(unitId).value] || 1) : (velocityUnits[document.getElementById(unitId).value] || 1);
     return val * unitFactor;
   }
-  // Convert SI unit value back to selected unit and fill input field
+
   function fromSI(valId, unitId, valSI, isMass) {
     if (!isFinite(valSI)) return;
     const unitFactor = isMass ? (massUnits[document.getElementById(unitId).value] || 1) : (velocityUnits[document.getElementById(unitId).value] || 1);
     document.getElementById(valId).value = (valSI / unitFactor).toFixed(5);
   }
 
-  // Update formula text depending on collision type
   function updateFormula() {
     const type = collisionTypeSelect.value;
     if (type === 'Perfectly Inelastic') {
@@ -447,121 +442,112 @@ v′₂ = [2m₁ / (m₁ + m₂)] v₁ + [(m₂ - m₁) / (m₁ + m₂)] v₂`;
     }
   }
 
-  // Enable or disable manual KE inputs
   function toggleManualKEInputs(enabled) {
     keLossInput.readOnly = !enabled;
     keBeforeInput.readOnly = !enabled;
     keAfterInput.readOnly = !enabled;
-    if (!enabled) {
-      clearKEInputs();
-    }
+    if (!enabled) clearKEInputs();
   }
-  // Clear KE inputs and results fields
+
   function clearKEInputs() {
     keLossInput.value = '';
     keBeforeInput.value = '';
     keAfterInput.value = '';
   }
-  // Clear momentum inputs
-  function clearMomentumInputs() {
-    inputsData.forEach(({valId})=>{
-      document.getElementById(valId).value = '';
-    });
-  }
 
-  // Calculate kinetic energy given mass(kg) and velocity(m/s)
   function kineticEnergy(massKg, velMps) {
     if (!isFinite(massKg) || !isFinite(velMps)) return NaN;
     return 0.5 * massKg * velMps * velMps;
   }
 
-  // Calculate total kinetic energies before and after, loss percent
   function computeKE(m1, v1, v1f, m2, v2, v2f) {
     const keBefore = kineticEnergy(m1, v1) + kineticEnergy(m2, v2);
     const keAfter = kineticEnergy(m1, v1f) + kineticEnergy(m2, v2f);
     const lossPercent = keBefore ? ((keBefore - keAfter) / keBefore) * 100 : 0;
-    return {keBefore, keAfter, lossPercent};
+    return { keBefore, keAfter, lossPercent };
   }
 
-  // Helper: count how many inputs given (not NaN)
   function countKnown(vals) {
-    return vals.reduce((acc,val)=>acc + (isFinite(val) ? 1 : 0),0);
+    return vals.reduce((acc, val) => acc + (isFinite(val) ? 1 : 0), 0);
   }
 
-  // Show alert error
   function showError(message) {
     alert(message);
   }
 
-  // Reverse-engineer velocities for different collision types given masses and partial velocity data
-  // Returns an object with velocities or null on error
-  function solveVelocities(m1,m2,v1,v2,v1f,v2f,collisionType) {
-    // Make numeric or NaN
-    [m1,m2,v1,v2,v1f,v2f] = [m1,m2,v1,v2,v1f,v2f].map(x=>isFinite(x)?x:NaN);
-    // Count known velocities (initial and final)
-    // Goal: fill missing velocities if possible
-    // Using formulas from physics:
-    if (collisionType==='Perfectly Elastic' || collisionType==='Unknown') {
-      // perfect elastic formulas:
-      // If both finals missing, calculate from initials
+  // Solve missing velocity - existing code, unchanged
+  function solveVelocities(m1, m2, v1, v2, v1f, v2f, collisionType) {
+    [m1, m2, v1, v2, v1f, v2f] = [m1, m2, v1, v2, v1f, v2f].map(x => (isFinite(x) ? x : NaN));
+    if (collisionType === 'Perfectly Elastic' || collisionType === 'Unknown') {
       if (!isFinite(v1f) && !isFinite(v2f) && isFinite(v1) && isFinite(v2)) {
         v1f = ((m1 - m2) / (m1 + m2)) * v1 + (2 * m2 / (m1 + m2)) * v2;
         v2f = ((m2 - m1) / (m1 + m2)) * v2 + (2 * m1 / (m1 + m2)) * v1;
       } else if (!isFinite(v1) && !isFinite(v2) && isFinite(v1f) && isFinite(v2f)) {
-        // Reverse: initial velocities from finals (in elastic collisions)
         const denominator = m1 + m2;
-        v1 = (v1f*(m1 - m2) + 2*m2*v2f)/denominator;
-        v2 = (v2f*(m2 - m1) + 2*m1*v1f)/denominator;
+        v1 = (v1f * (m1 - m2) + 2 * m2 * v2f) / denominator;
+        v2 = (v2f * (m2 - m1) + 2 * m1 * v1f) / denominator;
       } else if (isFinite(v1) && isFinite(v2) && isFinite(v1f) && !isFinite(v2f)) {
         v2f = ((m2 - m1) / (m1 + m2)) * v2 + (2 * m1 / (m1 + m2)) * v1;
       } else if (isFinite(v1) && isFinite(v2) && !isFinite(v1f) && isFinite(v2f)) {
         v1f = ((m1 - m2) / (m1 + m2)) * v1 + (2 * m2 / (m1 + m2)) * v2;
       } else if (isFinite(v1f) && isFinite(v2f) && !isFinite(v1) && isFinite(v2)) {
-        v1 = (v1f*(m1 + m2) - 2*m2*v2)/ (m1 - m2);
+        v1 = (v1f * (m1 + m2) - 2 * m2 * v2) / (m1 - m2);
       } else if (isFinite(v1f) && isFinite(v2f) && isFinite(v1) && !isFinite(v2)) {
-        v2 = (v2f*(m1 + m2) - 2*m1*v1)/ (m2 - m1);
+        v2 = (v2f * (m1 + m2) - 2 * m1 * v1) / (m2 - m1);
       }
-      // Otherwise, return what we have
-      return {v1,v2,v1f,v2f};
-    } else if (collisionType==='Perfectly Inelastic') {
-      // final velocities equal
+      return { v1, v2, v1f, v2f };
+    } else if (collisionType === 'Perfectly Inelastic') {
       if (isFinite(m1) && isFinite(m2) && isFinite(v1) && isFinite(v2)) {
-        const vFinal = (m1*v1 + m2*v2) / (m1 + m2);
-        return {v1,v2,v1f:vFinal,v2f:vFinal};
+        const vFinal = (m1 * v1 + m2 * v2) / (m1 + m2);
+        return { v1, v2, v1f: vFinal, v2f: vFinal };
       }
       if (isFinite(v1f) && isFinite(v2f)) {
         if (v1f !== v2f) {
           showError("In perfectly inelastic collision, final velocities must be equal.");
           return null;
         }
-        // If final known, try to estimate initial velocities maybe?
-        // But infinite possibilities
-        return {v1,v2,v1f,v2f};
+        return { v1, v2, v1f, v2f };
       }
-      return {v1,v2,v1f,v2f};
-    } else if (collisionType==='Partially Elastic') {
-      // Approximate e=0.5 coefficient of restitution
+      return { v1, v2, v1f, v2f };
+    } else if (collisionType === 'Partially Elastic') {
       const e = 0.5;
-      // Use formulas from original code
       if (isFinite(m1) && isFinite(m2)) {
         if (isFinite(v1) && isFinite(v2)) {
-          // Calculate finals
           let v1fCalc = ((m1 - e * m2) * v1 + (1 + e) * m2 * v2) / (m1 + m2);
           let v2fCalc = ((m2 - e * m1) * v2 + (1 + e) * m1 * v1) / (m1 + m2);
           if (!isFinite(v1f)) v1f = v1fCalc;
           if (!isFinite(v2f)) v2f = v2fCalc;
-          return {v1,v2,v1f,v2f};
+          return { v1, v2, v1f, v2f };
         }
-        // Reverse calculation for initial velocities from final velocities not supported here reliably.
       }
-      return {v1,v2,v1f,v2f};
+      return { v1, v2, v1f, v2f };
     }
-    return {v1,v2,v1f,v2f};
+    return { v1, v2, v1f, v2f };
   }
 
-  // Compute missing kinetic energy or loss % given two of three KE values
-  // Returns object {ke_before, ke_after, loss_percent}
-  // NA inputs as NaN
+  // Solve missing mass if exactly one missing and velocities known
+  function solveMasses(m1, m2, v1, v2, v1f, v2f) {
+    [m1, m2, v1, v2, v1f, v2f] = [m1, m2, v1, v2, v1f, v2f].map(x => isFinite(x) ? x : NaN);
+    const m1Missing = !isFinite(m1);
+    const m2Missing = !isFinite(m2);
+    if ((m1Missing && !m2Missing) || (!m1Missing && m2Missing)) {
+      if ([v1, v2, v1f, v2f].some(x => !isFinite(x))) return null;
+      if (m1Missing) {
+        const denom = v1 - v1f;
+        if (Math.abs(denom) < 1e-10) return null;
+        const val = m2 * (v2f - v2) / denom;
+        if (val > 0) return { m1: val, m2 };
+      }
+      if (m2Missing) {
+        const denom = v2 - v2f;
+        if (Math.abs(denom) < 1e-10) return null;
+        const val = m1 * (v1f - v1) / denom;
+        if (val > 0) return { m1, m2: val };
+      }
+    }
+    return null;
+  }
+
   function solveKE(ke_before, ke_after, loss_percent) {
     ke_before = parseFloat(ke_before);
     ke_after = parseFloat(ke_after);
@@ -569,31 +555,25 @@ v′₂ = [2m₁ / (m₁ + m₂)] v₁ + [(m₂ - m₁) / (m₁ + m₂)] v₂`;
     if (isNaN(ke_before)) ke_before = null;
     if (isNaN(ke_after)) ke_after = null;
     if (isNaN(loss_percent)) loss_percent = null;
-    // Use formulas:
-    // loss_percent = ((ke_before - ke_after)/ke_before)*100
     if (ke_before !== null && ke_after !== null) {
-      loss_percent = ((ke_before - ke_after)/ke_before)*100;
-      return {ke_before, ke_after, loss_percent};
+      loss_percent = ((ke_before - ke_after) / ke_before) * 100;
+      return { ke_before, ke_after, loss_percent };
     } else if (ke_before !== null && loss_percent !== null) {
-      ke_after = ke_before * (1 - loss_percent/100);
-      return {ke_before, ke_after, loss_percent};
+      ke_after = ke_before * (1 - loss_percent / 100);
+      return { ke_before, ke_after, loss_percent };
     } else if (ke_after !== null && loss_percent !== null) {
-      ke_before = ke_after / (1 - loss_percent/100);
-      return {ke_before, ke_after, loss_percent};
+      ke_before = ke_after / (1 - loss_percent / 100);
+      return { ke_before, ke_after, loss_percent };
     }
     return null;
   }
 
-  // Count how many of inputsValues are numbers not NaN for validation
   function countSet(vals) {
-    return vals.reduce((acc,v)=>acc + (isFinite(v) ? 1 : 0), 0);
+    return vals.reduce((acc, v) => acc + (isFinite(v) ? 1 : 0), 0);
   }
 
-  // Validate sufficient inputs for manual mode
-  // Must have at least 4 known quantities from mass and velocity inputs + 2 KE values (or 3 known with appropriate)
-  // If more missing than allowed, show error and stop
-  function validateInputsManual(m1,m2,v1,v2,v1f,v2f,ke_before,ke_after,loss_percent) {
-    let numKnownMom = countSet([m1,m2,v1,v2,v1f,v2f]);
+  function validateInputsManual(m1, m2, v1, v2, v1f, v2f, ke_before, ke_after, loss_percent) {
+    let numKnownMom = countSet([m1, m2, v1, v2, v1f, v2f]);
     let numKnownKE = 0;
     if (isFinite(ke_before)) numKnownKE++;
     if (isFinite(ke_after)) numKnownKE++;
@@ -602,7 +582,6 @@ v′₂ = [2m₁ / (m₁ + m₂)] v₁ + [(m₂ - m₁) / (m₁ + m₂)] v₂`;
       showError("Please enter at least two values among Loss of KE, Total KE before collision, and Total KE after collision.");
       return false;
     }
-    // Max 3 missing values allowed among the 6 momentum inputs to solve reliably
     if (numKnownMom < 3) {
       showError("Please provide at least three of the values among mass and velocities (initial and final) to solve.");
       return false;
@@ -610,7 +589,6 @@ v′₂ = [2m₁ / (m₁ + m₂)] v₁ + [(m₂ - m₁) / (m₁ + m₂)] v₂`;
     return true;
   }
 
-  // Populate KE fields (in manual mode, directly input values; in normal mode, set placeholders as results)
   function displayKE(keBefore, keAfter, lossPercent, manual) {
     if (manual) {
       keBeforeInput.value = isFinite(keBefore) ? keBefore.toFixed(5) : '';
@@ -626,53 +604,32 @@ v′₂ = [2m₁ / (m₁ + m₂)] v₁ + [(m₂ - m₁) / (m₁ + m₂)] v₂`;
     }
   }
 
-  // Main Calculate function
   function calculate() {
     const manual = manualKECheckbox.checked;
 
-    // Gather mass and velocity values in SI units
-    let m1 = toSI('m1','m1-unit',true);
-    let m2 = toSI('m2','m2-unit',true);
-    let v1 = toSI('v1','v1-unit',false);
-    let v2 = toSI('v2','v2-unit',false);
-    let v1f = toSI('v1f','v1f-unit',false);
-    let v2f = toSI('v2f','v2f-unit',false);
+    let m1 = toSI('m1', 'm1-unit', true);
+    let m2 = toSI('m2', 'm2-unit', true);
+    let v1 = toSI('v1', 'v1-unit', false);
+    let v2 = toSI('v2', 'v2-unit', false);
+    let v1f = toSI('v1f', 'v1f-unit', false);
+    let v2f = toSI('v2f', 'v2f-unit', false);
 
     if (!manual) {
-      // Normal mode: use collision formulas to calculate final velocities
-      const collision = collisionTypeSelect.value;
+      // Do NOT update final velocities - keep whatever user input is there
+      // Just compute KE based on inputs and display
 
-      if (collision === 'Perfectly Elastic' || collision === 'Unknown') {
-        v1f = ((m1 - m2) / (m1 + m2)) * v1 + (2 * m2 / (m1 + m2)) * v2;
-        v2f = ((m2 - m1) / (m1 + m2)) * v2 + (2 * m1 / (m1 + m2)) * v1;
-      } else if (collision === 'Perfectly Inelastic') {
-        const vFinal = (m1 * v1 + m2 * v2) / (m1 + m2);
-        v1f = v2f = vFinal;
-      } else if (collision === 'Partially Elastic') {
-        const e = 0.5;
-        if (m1 + m2 > 0) {
-          v1f = ((m1 - e * m2) * v1 + (1 + e) * m2 * v2) / (m1 + m2);
-          v2f = ((m2 - e * m1) * v2 + (1 + e) * m1 * v1) / (m1 + m2);
-        }
-      }
-      // Update velocities in inputs
-      fromSI('v1f','v1f-unit',v1f,false);
-      fromSI('v2f','v2f-unit',v2f,false);
-
-      // Compute KE values
-      const {keBefore, keAfter, lossPercent} = computeKE(m1,v1,v1f,m2,v2,v2f);
+      const { keBefore, keAfter, lossPercent } = computeKE(m1, v1, v1f, m2, v2, v2f);
       displayKE(keBefore, keAfter, lossPercent, false);
 
-      startAnimation(m1, m2, v1, v2, v1f, v2f, collision);
+      startAnimation(m1, m2, v1, v2, v1f, v2f, collisionTypeSelect.value);
+
     } else {
-      // Manual mode: read input KE fields and masses/velocities, compute missing ones
       let ke_before_val = parseFloat(keBeforeInput.value);
       let ke_after_val = parseFloat(keAfterInput.value);
       let loss_ke_val = parseFloat(keLossInput.value);
 
-      if (!validateInputsManual(m1,m2,v1,v2,v1f,v2f,ke_before_val,ke_after_val,loss_ke_val)) return;
+      if (!validateInputsManual(m1, m2, v1, v2, v1f, v2f, ke_before_val, ke_after_val, loss_ke_val)) return;
 
-      // Solve kinetic energy values if not provided and two values given
       const keValues = solveKE(ke_before_val, ke_after_val, loss_ke_val);
       if (keValues === null) {
         showError("Please enter at least two KE related values correctly.");
@@ -682,66 +639,52 @@ v′₂ = [2m₁ / (m₁ + m₂)] v₁ + [(m₂ - m₁) / (m₁ + m₂)] v₂`;
       ke_after_val = keValues.ke_after;
       loss_ke_val = keValues.loss_percent;
 
-      // Use the known m and v (initial and final) to calculate velocities if missing
-      // If can't solve velocities (e.g. too many missing), error
-      let velocities = solveVelocities(m1,m2,v1,v2,v1f,v2f,collisionTypeSelect.value);
-      if(velocities === null) return; // error shown inside solveVelocities
+      const solvedMasses = solveMasses(m1, m2, v1, v2, v1f, v2f);
+      if (solvedMasses !== null) {
+        if (isFinite(solvedMasses.m1)) m1 = solvedMasses.m1;
+        if (isFinite(solvedMasses.m2)) m2 = solvedMasses.m2;
+      }
+
+      const velocities = solveVelocities(m1, m2, v1, v2, v1f, v2f, collisionTypeSelect.value);
+      if (velocities === null) return;
 
       v1 = velocities.v1;
       v2 = velocities.v2;
       v1f = velocities.v1f;
       v2f = velocities.v2f;
 
-      if ([v1,v2,v1f,v2f].some(x=>!isFinite(x))) {
+      if ([v1, v2, v1f, v2f].some(x => !isFinite(x))) {
         showError("Cannot solve velocities from given inputs. Specify more inputs or check for invalid values.");
         return;
       }
 
-      // Check if kinetic energies calculated from provided masses and velocities match the provided KE inputs
-      const calculatedKE = computeKE(m1,v1,v1f,m2,v2,v2f);
-      // If KE mismatch (above some tolerance), that means inputs are inconsistent
-      const tolerance = 1e-3;
-      if (Math.abs(calculatedKE.keBefore - ke_before_val) > tolerance ||
-          Math.abs(calculatedKE.keAfter - ke_after_val) > tolerance) {
-        // This is allowed as user inputs manual KE, so do not override but show a warning (optional)
-        // For now, just proceed.
-      }
-
-      // Update input fields with calculated velocities normalized to selected units
-      inputsData.forEach(({valId, unitId, isMass}) => {
-        if (valId==='m1' || valId==='m2') {
-          let val = valId==='m1'?m1:m2;
-          fromSI(valId, unitId, val, true);
-        } else if (valId==='v1') {
-          fromSI(valId, unitId, v1, false);
-        } else if (valId==='v2') {
-          fromSI(valId, unitId, v2, false);
-        } else if (valId==='v1f') {
-          fromSI(valId, unitId, v1f, false);
-        } else if (valId==='v2f') {
-          fromSI(valId, unitId, v2f, false);
-        }
+      inputsData.forEach(({ valId, unitId, isMass }) => {
+        if (valId === 'm1') fromSI(valId, unitId, m1, true);
+        else if (valId === 'm2') fromSI(valId, unitId, m2, true);
+        else if (valId === 'v1') fromSI(valId, unitId, v1, false);
+        else if (valId === 'v2') fromSI(valId, unitId, v2, false);
+        else if (valId === 'v1f') fromSI(valId, unitId, v1f, false);
+        else if (valId === 'v2f') fromSI(valId, unitId, v2f, false);
       });
 
-      // Show KE fields as entered or calculated
       displayKE(ke_before_val, ke_after_val, loss_ke_val, true);
 
-      // Start the animation with the velocities in m/s scaled
       startAnimation(m1, m2, v1, v2, v1f, v2f, collisionTypeSelect.value);
     }
   }
 
-  // Reset all inputs
   function reset() {
-    inputsData.forEach(({valId})=>document.getElementById(valId).value='');
-    keBeforeInput.value = ''; keBeforeInput.placeholder='-- J';
-    keAfterInput.value = ''; keAfterInput.placeholder='-- J';
-    keLossInput.value = ''; keLossInput.placeholder='-- %';
+    inputsData.forEach(({ valId }) => (document.getElementById(valId).value = ''));
+    keBeforeInput.value = '';
+    keBeforeInput.placeholder = '-- J';
+    keAfterInput.value = '';
+    keAfterInput.placeholder = '-- J';
+    keLossInput.value = '';
+    keLossInput.placeholder = '-- %';
     updateFormula();
     stopAnimation();
   }
 
-  // Toggle manual KE input mode
   function toggleManualMode() {
     manualKECheckbox.checked ? enableManualMode() : disableManualMode();
   }
@@ -751,13 +694,9 @@ v′₂ = [2m₁ / (m₁ + m₂)] v₁ + [(m₂ - m₁) / (m₁ + m₂)] v₂`;
     keBeforeInput.placeholder = '';
     keAfterInput.placeholder = '';
     keLossInput.placeholder = '';
-
-    // Clear KE fields to encourage user input for manual mode
     keBeforeInput.value = '';
     keAfterInput.value = '';
     keLossInput.value = '';
-
-    // Optionally: allow modifying masses and velocities as normal (unchanged)
   }
   function disableManualMode() {
     manualKECheckbox.checked = false;
@@ -765,14 +704,12 @@ v′₂ = [2m₁ / (m₁ + m₂)] v₁ + [(m₂ - m₁) / (m₁ + m₂)] v₂`;
     clearKEInputs();
   }
 
-  // Initialization
   updateFormula();
   collisionTypeSelect.addEventListener('change', updateFormula);
   calculateBtn.addEventListener('click', calculate);
   resetBtn.addEventListener('click', reset);
   manualKECheckbox.addEventListener('change', toggleManualMode);
 
-  // Animation code (unchanged from your original for brevity)
   const canvas = document.getElementById('collisionCanvas');
   const ctx = canvas.getContext('2d');
   const width = canvas.width;
@@ -784,6 +721,7 @@ v′₂ = [2m₁ / (m₁ + m₂)] v₁ + [(m₂ - m₁) / (m₁ + m₂)] v₂`;
   let animationId = null;
   let ball1, ball2;
   const velocityScale = 50;
+
   function createBall(color, mass, x, vx) {
     return {
       color,
@@ -812,7 +750,7 @@ v′₂ = [2m₁ / (m₁ + m₂)] v₁ + [(m₂ - m₁) / (m₁ + m₂)] v₂`;
       }
     };
   }
-  function brightColor(c){
+  function brightColor(c) {
     const colors = {
       '#004a91': '#5aa1e9',
       '#8abbfd': '#c4dffb'
@@ -827,101 +765,102 @@ v′₂ = [2m₁ / (m₁ + m₂)] v₁ + [(m₂ - m₁) / (m₁ + m₂)] v₂`;
     const v2 = ((m2 - m1) / (m1 + m2)) * u2 + (2 * m1) / (m1 + m2) * u1;
     return [v1, v2];
   }
-  function partiallyElasticVelocities(m1, m2, u1, u2, e=0.5){
+  function partiallyElasticVelocities(m1, m2, u1, u2, e = 0.5) {
     const v1 = ((m1 * u1) + (m2 * u2) + m2 * e * (u2 - u1)) / (m1 + m2);
     const v2 = ((m1 * u1) + (m2 * u2) + m1 * e * (u1 - u2)) / (m1 + m2);
     return [v1, v2];
   }
-  let lastTime=null;
+  let lastTime = null;
   let collisionOccurred = false;
+
   function startAnimation(m1, m2, v1_init, v2_init, v1_final, v2_final, collisionType) {
-    if(animationRunning) return;
+    if (animationRunning) return;
+
     ball1 = createBall('#004a91', m1, 100, v1_init * velocityScale);
     ball2 = createBall('#8abbfd', m2, width - 100, v2_init * velocityScale);
     ball1.stuck = false;
     ball2.stuck = false;
     lastTime = performance.now();
     collisionOccurred = false;
-    function animate(time){
-      if(!animationRunning) return;
+
+    function animate(time) {
+      if (!animationRunning) return;
       const elapsed = (time - lastTime) / 1000;
       lastTime = time;
-      if(!ball1.stuck) ball1.x += ball1.vx * elapsed;
-      if(!ball2.stuck) ball2.x += ball2.vx * elapsed;
+      if (!ball1.stuck) ball1.x += ball1.vx * elapsed;
+      if (!ball2.stuck) ball2.x += ball2.vx * elapsed;
       const leftLimit = ball1.radius;
       const rightLimit = width - ball2.radius;
-      if(ball1.x < leftLimit){
+      if (ball1.x < leftLimit) {
         ball1.x = leftLimit;
         ball1.vx = -ball1.vx;
       }
-      if(ball2.x > rightLimit){
+      if (ball2.x > rightLimit) {
         ball2.x = rightLimit;
         ball2.vx = -ball2.vx;
       }
       const dist = distance(ball1, ball2);
       const minDist = ball1.radius + ball2.radius;
-      if(dist <= minDist){
-        if(!collisionOccurred){
+      if (dist <= minDist) {
+        if (!collisionOccurred) {
           collisionOccurred = true;
-          if(collisionType === 'Perfectly Inelastic'){
-            ball1.x = (ball1.x + ball2.x)/2 - ball1.radius/2;
+          if (collisionType === 'Perfectly Inelastic') {
+            ball1.x = (ball1.x + ball2.x) / 2 - ball1.radius / 2;
             ball2.x = ball1.x + ball1.radius + ball2.radius;
-            const avgVx = (ball1.vx * ball1.mass + ball2.vx * ball2.mass)/(ball1.mass + ball2.mass);
+            const avgVx = (ball1.vx * ball1.mass + ball2.vx * ball2.mass) / (ball1.mass + ball2.mass);
             ball1.vx = avgVx;
             ball2.vx = avgVx;
             ball1.stuck = true;
             ball2.stuck = true;
-          } else if(collisionType === 'Partially Elastic'){
-            let [newV1, newV2] = partiallyElasticVelocities(ball1.mass, ball2.mass, ball1.vx/velocityScale, ball2.vx/velocityScale);
+          } else if (collisionType === 'Partially Elastic') {
+            let [newV1, newV2] = partiallyElasticVelocities(ball1.mass, ball2.mass, ball1.vx / velocityScale, ball2.vx / velocityScale);
             ball1.vx = newV1 * velocityScale;
             ball2.vx = newV2 * velocityScale;
             const overlap = minDist - dist;
-            ball1.x -= overlap/2;
-            ball2.x += overlap/2;
+            ball1.x -= overlap / 2;
+            ball2.x += overlap / 2;
           } else {
-            let [newV1, newV2] = elasticCollisionVelocities(ball1.mass, ball2.mass, ball1.vx/velocityScale, ball2.vx/velocityScale);
+            let [newV1, newV2] = elasticCollisionVelocities(ball1.mass, ball2.mass, ball1.vx / velocityScale, ball2.vx / velocityScale);
             ball1.vx = newV1 * velocityScale;
             ball2.vx = newV2 * velocityScale;
             const overlap = minDist - dist;
-            ball1.x -= overlap/2;
-            ball2.x += overlap/2;
+            ball1.x -= overlap / 2;
+            ball2.x += overlap / 2;
           }
         }
       }
-      if(collisionOccurred){
+      if (collisionOccurred) {
         const margin = 2;
         const movingApart = (ball1.vx < ball2.vx) || (ball1.vx === 0 && ball2.vx === 0);
-        if(dist > minDist + margin && movingApart){
+        if (dist > minDist + margin && movingApart) {
           stopAnimation();
         }
-        if(collisionType === 'Perfectly Inelastic' && ball1.stuck && ball2.stuck){
+        if (collisionType === 'Perfectly Inelastic' && ball1.stuck && ball2.stuck) {
           stopAnimation();
         }
       }
-      ctx.clearRect(0,0,width,height);
+      ctx.clearRect(0, 0, width, height);
       ctx.fillStyle = 'rgba(0,0,0,0.1)';
-      ctx.ellipse(ball1.x, ball1.y + ball1.radius*0.8, ball1.radius*0.8, ball1.radius*0.3, 0, 0, Math.PI*2);
+      ctx.ellipse(ball1.x, ball1.y + ball1.radius * 0.8, ball1.radius * 0.8, ball1.radius * 0.3, 0, 0, Math.PI * 2);
       ctx.fill();
-      ctx.ellipse(ball2.x, ball2.y + ball2.radius*0.8, ball2.radius*0.8, ball2.radius*0.3, 0, 0, Math.PI*2);
+      ctx.ellipse(ball2.x, ball2.y + ball2.radius * 0.8, ball2.radius * 0.8, ball2.radius * 0.3, 0, 0, Math.PI * 2);
       ctx.fill();
       ball1.draw();
       ball2.draw();
-      if(animationRunning)
-        animationId = requestAnimationFrame(animate);
+      if (animationRunning) animationId = requestAnimationFrame(animate);
     }
+
     animationRunning = true;
     animationId = requestAnimationFrame(animate);
   }
+
   function stopAnimation() {
-    if(!animationRunning) return;
+    if (!animationRunning) return;
     animationRunning = false;
-    if(animationId){
+    if (animationId) {
       cancelAnimationFrame(animationId);
       animationId = null;
     }
-        document.getElementById('backHomeBtn').addEventListener('click', () => {
-  window.location.href = 'index.html'; // Change this to your homepage filename if different
-});
   }
 </script>
 </body>
