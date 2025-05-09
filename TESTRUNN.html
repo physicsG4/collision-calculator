@@ -361,7 +361,22 @@
   <div id="simulation-label">Collision Simulation</div>
   <canvas id="collisionCanvas" width="1000" height="220"></canvas>
 </div>
-
+        <div style="display: flex; justify-content: flex-start; margin-top: 0%;">
+            <button id="backHomeBtn" style="
+              background-color: #3a5a86;
+              color: white;
+              padding: 10px 20px;
+              font-weight: bold;
+              font-size: 14px;
+              border: none;
+              border-radius: 8px;
+              cursor: pointer;
+              user-select: none;
+              margin-left: 16.75%;
+              margin-bottom: 20%;
+            ">
+              ← Back to homepage
+            </button>
 <script>
   // Cached DOM elements
   const collisionTypeSelect = document.getElementById('collision-type');
@@ -896,6 +911,10 @@ v′₂ = [2m₁ / (m₁ + m₂)] v₁ + [(m₂ - m₁) / (m₁ + m₂)] v₂`;
     }
     animationRunning = true;
     animationId = requestAnimationFrame(animate);
+    document.getElementById('backHomeBtn').addEventListener('click', () => {
+  window.location.href = 'index.html'; // Change this to your homepage filename if different
+});
+
   }
   function stopAnimation() {
     if(!animationRunning) return;
