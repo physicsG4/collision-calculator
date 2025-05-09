@@ -911,10 +911,6 @@ v′₂ = [2m₁ / (m₁ + m₂)] v₁ + [(m₂ - m₁) / (m₁ + m₂)] v₂`;
     }
     animationRunning = true;
     animationId = requestAnimationFrame(animate);
-    document.getElementById('backHomeBtn').addEventListener('click', () => {
-  window.location.href = 'index.html'; // Change this to your homepage filename if different
-});
-
   }
   function stopAnimation() {
     if(!animationRunning) return;
@@ -923,6 +919,9 @@ v′₂ = [2m₁ / (m₁ + m₂)] v₁ + [(m₂ - m₁) / (m₁ + m₂)] v₂`;
       cancelAnimationFrame(animationId);
       animationId = null;
     }
+        document.getElementById('backHomeBtn').addEventListener('click', () => {
+  window.location.href = 'index.html'; // Change this to your homepage filename if different
+});
   }
 </script>
 </body>
