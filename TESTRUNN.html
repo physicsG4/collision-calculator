@@ -361,21 +361,23 @@
   <canvas id="collisionCanvas" width="1000" height="220"></canvas>
 </div>
 <div style="display: flex; justify-content: flex-start; margin-top: 0%;">
-  <button id="backHomeBtn" style="
-    background-color: #3a5a86;
-    color: white;
-    padding: 10px 20px;
-    font-weight: bold;
-    font-size: 14px;
-    border: none;
-    border-radius: 8px;
-    cursor: pointer;
-    user-select: none;
-    margin-left: 16.95%;
-    margin-bottom: 20%;
-  ">
-    ← Back to homepage
-  </button>
+      <form action="index.html" method="get">
+        <button id="submit" style="
+        background-color: #3a5a86;
+        color: white;
+        padding: 10px 20px;
+        font-weight: bold;
+        font-size: 14px;
+        border: none;
+        border-radius: 8px;
+        cursor: pointer;
+        user-select: none;
+        margin-left: 140.5%;
+        margin-bottom: 20%;
+      ">
+        ← Back to homepage
+      </button>
+    </form>
 </div>
 <script>
   const collisionTypeSelect = document.getElementById('collision-type');
