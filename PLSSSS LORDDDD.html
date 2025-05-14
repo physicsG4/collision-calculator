@@ -343,7 +343,6 @@
     <div id="simulation-label">Collision Simulation</div>
     <canvas id="collisionCanvas" width="1000" height="180"></canvas>
   </div>
-
 <script>
   const collisionTypeSelect = document.getElementById('collision-type');
   const formulaBox = document.querySelector('.formula-box');
@@ -426,100 +425,103 @@
     input.value = (valSI / unitFactor).toFixed(5);
   }
 
-  // Main solver function rearranging momentum equations for missing variables based on specified logic
-  function solveMissing(params, collisionType) {
-    let { m1, m2, v1, v2, v1f, v2f } = params;
+  // Your new solveCollision function for perfectly elastic
+  function solveCollision({ m1, m2, v1, v2, v1f, v2f }) {
+    const isNull = x => x === null;
 
+    if (isNull(v1f) && isNull(v2f)) {
+      if (m1 === null || m2 === null || v1 === null || v2 === null) return null;
+      v1f = ((m1 - m2) / (m1 + m2)) * v1 + (2 * m2 / (m1 + m2)) * v2;
+      v2f = (2 * m1 / (m1 + m2)) * v1 + ((m2 - m1) / (m1 + m2)) * v2;
+      return { m1, m2, v1, v2, v1f, v2f };
+    }
+    if (isNull(v1f) && isNull(v1)) {
+      if (m1 === null || m2 === null || v2 === null || v2f === null) return null;
+      v1 = (m1 * v1f + m2 * v2f - m2 * v2) / m1;
+      v1f = ((m1 - m2) / (m1 + m2)) * v1 + (2 * m2 / (m1 + m2)) * v2;
+      return { m1, m2, v1, v2, v1f, v2f };
+    }
+    if (isNull(v1f) && isNull(m1)) {
+      if (v1 === null || m2 === null || v2 === null || v2f === null) return null;
+      m1 = (m2 * (v2 - v2f)) / (v1f - v1);
+      v1f = ((m1 - m2) / (m1 + m2)) * v1 + (2 * m2 / (m1 + m2)) * v2;
+      return { m1, m2, v1, v2, v1f, v2f };
+    }
+    if (isNull(v1f) && isNull(v2)) {
+      if (m1 === null || m2 === null || v1 === null || v2f === null) return null;
+      v2 = (v2f * (m1 + m2) - 2 * m1 * v1 - (m2 - m1) * v1) / (2 * m2);
+      v1f = ((m1 - m2) / (m1 + m2)) * v1 + (2 * m2 / (m1 + m2)) * v2;
+      return { m1, m2, v1, v2, v1f, v2f };
+    }
+    if (isNull(v1f) && isNull(m2)) {
+      if (m1 === null || v1 === null || v2 === null || v2f === null) return null;
+      m2 = (m1 * (v1 - v1f)) / (v2f - v2);
+      v1f = ((m1 - m2) / (m1 + m2)) * v1 + (2 * m2 / (m1 + m2)) * v2;
+      return { m1, m2, v1, v2, v1f, v2f };
+    }
+    if (isNull(v2f) && isNull(v2)) {
+      if (m1 === null || m2 === null || v1 === null || v1f === null) return null;
+      v2 = (v2f * (m1 + m2) - (2 * m1 * v1) - ((m2 - m1) * v1)) / (2 * m2);
+      v2f = (2 * m1 / (m1 + m2)) * v1 + ((m2 - m1) / (m1 + m2)) * v2;
+      return { m1, m2, v1, v2, v1f, v2f };
+    }
+    if (isNull(v2f) && isNull(m2)) {
+      if (m1 === null || v1 === null || v2 === null || v1f === null) return null;
+      m2 = (m1 * (v1 - v1f)) / (v2f - v2);
+      v2f = (2 * m1 / (m1 + m2)) * v1 + ((m2 - m1) / (m1 + m2)) * v2;
+      return { m1, m2, v1, v2, v1f, v2f };
+    }
+    if (isNull(v2f) && isNull(v1)) {
+      if (m1 === null || m2 === null || v2 === null || v1f === null) return null;
+      v1 = (v1f * (m1 + m2) - 2 * m2 * v2 - (m1 - m2) * v2) / (2 * m1);
+      v2f = (2 * m1 / (m1 + m2)) * v1 + ((m2 - m1) / (m1 + m2)) * v2;
+      return { m1, m2, v1, v2, v1f, v2f };
+    }
+    if (isNull(v2f) && isNull(m1)) {
+      if (m2 === null || v1 === null || v2 === null || v1f === null) return null;
+      m1 = (m2 * (v2 - v2f)) / (v1f - v1);
+      v2f = (2 * m1 / (m1 + m2)) * v1 + ((m2 - m1) / (m1 + m2)) * v2;
+      return { m1, m2, v1, v2, v1f, v2f };
+    }
+    return null; // No case matched or insufficient data
+  }
+
+  function solveMissing(params, collisionType) {
+    if (collisionType === 'Perfectly Elastic') {
+      const res = solveCollision(params);
+      if (res !== null) return res;
+      return params;
+    }
+
+    // Original logic for other collision types
+    let { m1, m2, v1, v2, v1f, v2f } = params;
     const allVars = [m1, m2, v1, v2, v1f, v2f];
     const unknownCount = allVars.filter(v => v === null).length;
 
-    // Handle Perfectly Elastic Collision logic
-    if (collisionType === 'Perfectly Elastic') {
-      // Max blanks: 2; allowed: Both final velocities or one final velocity + one mass or initial velocity
-      if (unknownCount > 2) return params; // too many unknowns
-
-      // If both final velocities missing (most common case)
-      if (v1f === null && v2f === null) {
-        if (m1 === null || m2 === null || v1 === null || v2 === null) return params; // not enough info
-        v1f = ((m1 - m2) / (m1 + m2)) * v1 + (2 * m2 / (m1 + m2)) * v2;
-        v2f = (2 * m1 / (m1 + m2)) * v1 + ((m2 - m1) / (m1 + m2)) * v2;
-      }
-      // One final velocity and one other unknown
-      else if ((v1f === null && v2f !== null) || (v2f === null && v1f !== null)) {
-        // Identify which final velocity is missing
-        if (m1 === null || m2 === null || v1 === null || v2 === null) return params; // not enough info
-
-        if (v1f === null) {
-          v1f = ((m1 - m2) / (m1 + m2)) * v1 + (2 * m2 / (m1 + m2)) * v2;
-        } else if (v2f === null) {
-          v2f = (2 * m1 / (m1 + m2)) * v1 + ((m2 - m1) / (m1 + m2)) * v2;
-        }
-      }
-      // Otherwise, rely on momentum conservation to solve one missing variable if only one unknown exists
-      else if (unknownCount === 1) {
-        // momentum conservation: m1*v1 + m2*v2 = m1*v1f + m2*v2f
-        if (m1 === null) {
-          const denom = v1 - v1f;
-          if (denom === 0) return params;
-          const val = m2 * (v2f - v2) / denom;
-          if (val > 0) m1 = val;
-        } else if (m2 === null) {
-          const denom = v2 - v2f;
-          if (denom === 0) return params;
-          const val = m1 * (v1f - v1) / denom;
-          if (val > 0) m2 = val;
-        } else if (v1 === null) {
-          v1 = (m1 * v1f + m2 * v2f - m2 * v2) / m1;
-        } else if (v2 === null) {
-          v2 = (m1 * v1f + m2 * v2f - m1 * v1) / m2;
-        } else if (v1f === null) {
-          v1f = ((m1 - m2) / (m1 + m2)) * v1 + (2 * m2 / (m1 + m2)) * v2;
-        } else if (v2f === null) {
-          v2f = (2 * m1 / (m1 + m2)) * v1 + ((m2 - m1) / (m1 + m2)) * v2;
-        }
-      } else {
-        // Too many unknowns for elastic case, return unchanged
-        return params;
-      }
-    }
-    // Handle Perfectly Inelastic Collision logic
-    else if (collisionType === 'Perfectly Inelastic') {
-      // Max blanks allowed: 3; must include both final velocities & 1 other (mass or initial velocity)
-      // If more than 3 unknowns, cannot solve
+    if (collisionType === 'Perfectly Inelastic') {
       if (unknownCount > 3) return params;
 
-      // Final velocities must be equal
-      // If both final velocities missing
       if (v1f === null && v2f === null) {
-        // Need at least m1, m2, v1, v2 known to compute vf
-        if (m1 === null || m2 === null || v1 === null || v2 === null) return params; // insufficient info
+        if (m1 === null || m2 === null || v1 === null || v2 === null) return params;
         const vf = (m1 * v1 + m2 * v2) / (m1 + m2);
         v1f = vf;
         v2f = vf;
-      } else if ((v1f === null && v2f !== null) || (v2f === null && v1f !== null)) {
-        // One final velocity missing, set it equal to the other
-        if (v1f === null) v1f = v2f;
-        else v2f = v1f;
+      } else if (v1f === null) {
+        v1f = v2f;
+      } else if (v2f === null) {
+        v2f = v1f;
       }
 
-      // If after setting final velocities, still exactly one more unknown which is mass or initial velocity, solve momentum conservation
       const updatedUnknowns = [m1, m2, v1, v2].filter(v => v === null).length;
       if (updatedUnknowns === 1) {
-        // Use momentum conservation: m1*v1 + m2*v2 = (m1 + m2)*vf
         if (m1 === null) {
-          // m1 = ((m1 + m2) * vf - m2 * v2)/v1 but m1 on both sides so:
-          // Solve for m1: m1*v1 + m2*v2 = (m1 + m2)*vf
-          // m1*v1 = m1*vf + m2*vf - m2*v2
-          // m1*(v1 - vf) = m2*(vf - v2)
           const denom = v1 - v1f;
           if (denom === 0) return params;
-          const val = m2 * (v1f - v2) / denom;
-          if (val > 0) m1 = val;
+          m1 = m2 * (v1f - v2) / denom;
         } else if (m2 === null) {
           const denom = v2 - v2f;
           if (denom === 0) return params;
-          const val = m1 * (v1f - v1) / denom;
-          if (val > 0) m2 = val;
+          m2 = m1 * (v1f - v1) / denom;
         } else if (v1 === null) {
           v1 = ((m1 + m2) * v1f - m2 * v2) / m1;
         } else if (v2 === null) {
@@ -527,19 +529,16 @@
         }
       }
     } else {
-      // For Unknown or Partially Elastic or others fallback to simple momentum conservation with single missing variable:
       if (unknownCount !== 1) return params;
 
       if (m1 === null) {
         const denom = v1 - v1f;
         if (denom === 0) return params;
-        const val = m2 * (v2f - v2) / denom;
-        if (val > 0) m1 = val;
+        m1 = m2 * (v2f - v2) / denom;
       } else if (m2 === null) {
         const denom = v2 - v2f;
         if (denom === 0) return params;
-        const val = m1 * (v1f - v1) / denom;
-        if (val > 0) m2 = val;
+        m2 = m1 * (v1f - v1) / denom;
       } else if (v1 === null) {
         v1 = (m1 * v1f + m2 * v2f - m2 * v2) / m1;
       } else if (v2 === null) {
@@ -555,7 +554,6 @@
   }
 
   function calculate() {
-    // Read inputs and convert to SI units or null if empty
     let m1 = convertMass('m1');
     let m2 = convertMass('m2');
     let v1 = convertVelocity('v1');
@@ -565,7 +563,6 @@
 
     const collision = collisionTypeSelect.value;
 
-    // Solve single missing variable if any, else use values as is
     const solvedValues = solveMissing({ m1, m2, v1, v2, v1f, v2f }, collision);
 
     m1 = solvedValues.m1;
@@ -575,8 +572,6 @@
     v1f = solvedValues.v1f;
     v2f = solvedValues.v2f;
 
-    // Update inputs with solved values (except those originally entered)
-    // Only update inputs that were empty before
     if (getInputValue('m1') === null && m1 !== null) fromSI('m1', m1, true);
     if (getInputValue('m2') === null && m2 !== null) fromSI('m2', m2, true);
     if (getInputValue('v1') === null && v1 !== null) fromSI('v1', v1, false);
@@ -584,7 +579,6 @@
     if (getInputValue('v1f') === null && v1f !== null) fromSI('v1f', v1f, false);
     if (getInputValue('v2f') === null && v2f !== null) fromSI('v2f', v2f, false);
 
-    // Calculate kinetic energies and losses
     const keBefore = (m1 !== null && v1 !== null) ? 0.5 * m1 * v1 * v1 : 0;
     const keBefore2 = (m2 !== null && v2 !== null) ? 0.5 * m2 * v2 * v2 : 0;
     const keAfter = (m1 !== null && v1f !== null) ? 0.5 * m1 * v1f * v1f : 0;
@@ -593,7 +587,6 @@
     const totalKEAfter = keAfter + keAfter2;
     const keLoss = totalKEBefore !== 0 ? ((totalKEBefore - totalKEAfter) / totalKEBefore) * 100 : 0;
 
-    // Display kinetic energy info
     KE_BEFORE.textContent = totalKEBefore.toFixed(2) + ' J';
     KE_AFTER.textContent = totalKEAfter.toFixed(2) + ' J';
     KE_LOSS.textContent = keLoss.toFixed(2) + ' %';
